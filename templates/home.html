@@ -2,9 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Comparring E-Commerce Products</title>
 </head>
 <body>
+	<div class="heading" style="margin: 0 auto;">
+    <h2>Comparring E-Commerce Products</h2>
+	</div>
+	<div class="form" style="margin: 0 auto;">
 
+    <form action="." method="post">{% csrf_token %}
+		{{form.querry}}
+		<button type="submit">Search</button>
+
+		<p>{{ result }}</p>
+		{% if flipkart_price %}
+			<p>Flipkart Price: {{ flipkart_price }}</p>
+		{% endif %}
+		{% if snapdeal_price %}
+			<p>Snapdeal Price: {{ snapdeal_price }}</p>
+		{% endif %}
+	</form>
+	</div>
 </body>
 </html>
