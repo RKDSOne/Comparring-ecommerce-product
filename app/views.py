@@ -1,34 +1,34 @@
-from django.shortcuts import render_to_response,render
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from bs4 import BeautifulSoup as bs
 from py_bing_search import PyBingWebSearch
 from app.forms import *
 import requests
 
-def compare_algo(request):
+def compare(request):
     if request.method == 'POST':
         form = search(request.POST)
         if form.is_valid():
-            product_name = form.cleaned_data['querry']
+            product = form.cleaned_data['querry']
             API_KEY = "8eFYvQ0mCr06A3YoUZV9XK7867AgLLDeLuBdhILm+3c"
 
-            querry = "buy " + product_name
+            querry = "buy " + product
 
             bing_web = PyBingWebSearch(API_KEY, querry, web_only=False)
 
-            first_ten_result = bing_web.search(limit=50, format='json')
+            results = bing_web.search(limit=50, format='json')
 
-            flipkart_urls = []
-            flipkart_price_ar = []
-            snapdeal_urls = []
-            snapdeal_price_ar = []
-            min_flipkart = 0
-            min_snapdeal = 0
+            fkart_urls = []
+            fkart_price_ar = []
+            sdeal_urls = []
+            sdeal_price_ar = []
+            min_fkart = 0
+            min_sdeal = 0
 
-            for result in first_ten_result:
-                vendor = result.url.split('.')[1]
+            for result in results:
+                comp = result.url.split('.')[1]
 
-                if vendor == 'flipkart':
+                if comp == 'flipkart':
                     p = ' '
 
                     try:
@@ -37,10 +37,10 @@ def compare_algo(request):
                         continue
 
                     if p == 'p':
-                        flipkart_urls.append(result.url)
-                        flipkart_flag = 1
+                        fkart_urls.append(result.url)
+                        fkart_flag = 1
 
-                if vendor == 'snapdeal':
+                if comp == 'snapdeal':
                     p = ' '
 
                     try:
@@ -49,21 +49,21 @@ def compare_algo(request):
                         continue
 
                     if p == 'product':
-                        snapdeal_urls.append(result.url)
-                        snapdeal_flag = 1
+                        sdeal_urls.append(result.url)
+                        sdeal_flag = 1
 
-            if len(flipkart_urls) == 0 and len(snapdeal_urls) == 0:
+            if len(fkart_urls) == 0 and len(sdeal_urls) == 0:
                 result = 'Search Failed!'
                 variables = RequestContext(request, {'result': result})
                 return render_to_response('home.html', variables)
 
             else:
-                for url in flipkart_urls:
-                    flipkart_url = url
-                    flipkart_page = requests.get(flipkart_url)
-                    flipkart_html = flipkart_page.text
-                    flipkart_soup = bs(flipkart_html, 'html.parser')
-                    meta_desc = flipkart_soup.findAll(attrs={"name": "Description"})
+                for url in fkart_urls:
+                    fkart_url = url
+                    fkart_page = requests.get(fkart_url)
+                    fkart_html = fkart_page.text
+                    fkart_soup = bs(fkart_html, 'html.parser')
+                    meta_desc = fkart_soup.findAll(attrs={"name": "Description"})
                     meta_desc_content_split = meta_desc[0]['content'].split(" ")
                     for_bool = 0
                     For_bool = 0
@@ -81,48 +81,48 @@ def compare_algo(request):
                     if for_bool == 0 or For_bool == 0:
                         str_price = meta_desc_content_split[for_index + 1]
                         if(str_price == 'Rs.'):
-                            flipkart_price = meta_desc_content_split[for_index + 2]
-                            flipkart_price_ar.append(flipkart_price)
+                            fkart_price = meta_desc_content_split[for_index + 2]
+                            fkart_price_ar.append(fkart_price)
                         else:
-                            flipkart_price = str_price[3:]
-                            flipkart_price_ar.append(flipkart_price)
+                            fkart_price = str_price[3:]
+                            fkart_price_ar.append(fkart_price)
 
-                for url in snapdeal_urls:
-                    snapdeal_url = url
-                    snapdeal_page = requests.get(snapdeal_url)
-                    snapdeal_html = snapdeal_page.text
-                    snapdeal_soup = bs(snapdeal_html, 'html.parser')
-                    input_tag = snapdeal_soup.find_all('input', id='productPrice')
+                for url in sdeal_urls:
+                    sdeal_url = url
+                    sdeal_page = requests.get(sdeal_url)
+                    sdeal_html = sdeal_page.text
+                    sdeal_soup = bs(sdeal_html, 'html.parser')
+                    input_tag = sdeal_soup.find_all('input', id='productPrice')
                     ex = 0
                     try:
                         str_price = input_tag[0]['value']
                     except:
                         ex = 1
                     if(ex != 1):
-                        snapdeal_price_ar.append(str_price)
+                        sdeal_price_ar.append(str_price)
 
-                if(len(flipkart_price_ar)>0):
-                    min_flipkart = flipkart_price_ar[0]
-                    for price in flipkart_price_ar:
-                        if(price>min_flipkart):
-                            min_flipkart = price
+                if(len(fkart_price_ar)>0):
+                    min_fkart = fkart_price_ar[0]
+                    for price in fkart_price_ar:
+                        if(price>min_fkart):
+                            min_fkart = price
 
-                if(len(snapdeal_price_ar)>0):
-                    min_snapdeal = snapdeal_price_ar[0]
-                    for price in snapdeal_price_ar:
-                        if(price>min_snapdeal):
-                            min_snapdeal = price
+                if(len(sdeal_price_ar)>0):
+                    min_sdeal = sdeal_price_ar[0]
+                    for price in sdeal_price_ar:
+                        if(price>min_sdeal):
+                            min_sdeal = price
 
                 result = 'Search Succesful!'
                 variables = RequestContext(request, {
                     'form': form,
                     'result': result,
-                    'flipkart_price': str(min_flipkart),
-                    'snapdeal_price': str(min_snapdeal)
+                    'flipkart_price': str(min_fkart),
+                    'snapdeal_price': str(min_sdeal)
                 })
-                return render_to_response('home.html', variables, RequestContext(request))
+                return render_to_response('home.html', variables)
     else:
         form = search()
         variables = RequestContext(request, {'form': form})
-        return render_to_response('home.html', variables, RequestContext(request))
+        return render_to_response('home.html', variables)
 
