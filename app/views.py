@@ -10,7 +10,7 @@ def compare(request):
         form = search(request.POST)
         if form.is_valid():
             product = form.cleaned_data['querry']
-            API_KEY = "8eFYvQ0mCr06A3YoUZV9XK7867AgLLDeLuBdhILm+3c"
+            API_KEY = "Your API key"
 
             querry = "buy " + product
 
@@ -54,8 +54,8 @@ def compare(request):
 
             if len(fkart_urls) == 0 and len(sdeal_urls) == 0:
                 result = 'Search Failed!'
-                variables = RequestContext(request, {'result': result})
-                return render_to_response('home.html', variables)
+                context = RequestContext(request, {'result': result})
+                return render_to_response('home.html', context)
 
             else:
                 for url in fkart_urls:
@@ -114,15 +114,15 @@ def compare(request):
                             min_sdeal = price
 
                 result = 'Search Succesful!'
-                variables = RequestContext(request, {
+                context = RequestContext(request, {
                     'form': form,
                     'result': result,
                     'flipkart_price': str(min_fkart),
                     'snapdeal_price': str(min_sdeal)
                 })
-                return render_to_response('home.html', variables)
+                return render_to_response('home.html', context)
     else:
         form = search()
-        variables = RequestContext(request, {'form': form})
-        return render_to_response('home.html', variables)
+        context = RequestContext(request, {'form': form})
+        return render_to_response('home.html', context)
 
