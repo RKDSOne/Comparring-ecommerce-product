@@ -23,76 +23,36 @@
 <div class="page-header">
     <h1>Enter the required product</h1>
 </div>
-	<!div class="heading" style="margin: 0 auto;">
 
-        <!h1>Enter the required product</h1>
-	<!/div>
 	<div class="form" style="margin: 0 auto;">
-
-    <form action="." method="post">{% csrf_token %}
-		{{form.querry}}
-		<button type="submit">Search</button>
-
-		<p>{{ result }}</p>
-		{% if flipkart_price %}
-			<p>Flipkart Price: {{ flipkart_price }}</p>
-		{% endif %}
-		{% if snapdeal_price %}
-			<p>Snapdeal Price: {{ snapdeal_price }}</p>
-		{% endif %}
-	</form>
-	</div>
- <script src = "{% static 'js/jquery.min.js' %}"></script>
- <script src = "{% static 'js/bootstrap.min.js' %}"></script>
-
-</body>
-=======
-{% load staticfiles %}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Comparring E-Commerce Products</title>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">">
-</head>
-<body>
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Comparring E-Commerce Products</a>
+        <div class="col-xs-12 col-md-8">
+            <div class="row">
+                <div class="col-xs-8">
+                    <form action="." method="post">{% csrf_token %}
+                        {{form.querry}}
+                </div>
+                <div class="col-xs-2>
+                <button type="submit" class="btn btn-primary btn-lg">Search</button>
             </div>
-        </div>
-    </nav>
-
-	<div class="heading" style="margin: 0 auto;">
-
-        <h1>Enter the required product</h1>
-	</div>
-	<div class="form" style="margin: 0 auto;">
-
-    <form action="." method="post">{% csrf_token %}
-		{{form.querry}}
-		<button type="submit">Search</button>
-
 		<p>{{ result }}</p>
+
 		{% if flipkart_price %}
-			<p>Flipkart Price: {{ flipkart_price }}</p>
+            <span class="input-group-addon"><p>Flipkart Price: {{ flipkart_price }}</p></span>
+
 		{% endif %}
 		{% if snapdeal_price %}
-			<p>Snapdeal Price: {{ snapdeal_price }}</p>
+            <span class="input-group-addon"><p>Snapdeal Price: {{ snapdeal_price }}</p></span>
 		{% endif %}
 	</form>
+        </div>
+
+        </div>
+
 	</div>
+
  <script src = "{% static 'js/jquery.min.js' %}"></script>
  <script src = "{% static 'js/bootstrap.min.js' %}"></script>
 
 </body>
->>>>>>> 2550c8d65edfec042bdf330e7dc5db1f373473ff
+
 </html>

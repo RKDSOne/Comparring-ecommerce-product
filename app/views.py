@@ -10,7 +10,7 @@ def compare(request):
         form = search(request.POST)
         if form.is_valid():
             product = form.cleaned_data['querry']
-            API_KEY = "Your API key"
+            API_KEY = "8eFYvQ0mCr06A3YoUZV9XK7867AgLLDeLuBdhILm+3c"
 
             querry = "buy " + product
 
