@@ -86,8 +86,23 @@ def compare(request):
                         else:
                             fkart_price = str_price[3:]
                             fkart_price_ar.append(fkart_price)
+                    
 
 
+                for url in sdeal_urls:
+                    sdeal_url = url
+                    sdeal_page = requests.get(sdeal_url)
+                    sdeal_html = sdeal_page.text
+                    sdeal_soup = bs(sdeal_html, 'html.parser')
+                    input_tag = sdeal_soup.find_all('input', id='productPrice')
+                    ex = 0
+                    try:
+                        str_price = input_tag[0]['value']
+                    except:
+                        ex = 1
+                    if(ex != 1):
+                        sdeal_price_ar.append(str_price)
+                        
                 if(len(fkart_price_ar)>0):
                     min_fkart = fkart_price_ar[0]
                     for price in fkart_price_ar:
